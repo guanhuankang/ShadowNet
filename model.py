@@ -36,7 +36,7 @@ class head(nn.Module):
         return self.conv_1x1(x)
 
 class LocalShadowDetector(nn.Module):
-    def __init__(self, size=(320,320)):
+    def __init__(self, size):
         super(LocalShadowDetector, self).__init__()
         self.block = nn.Sequential(
             nn.Conv2d( 64, 32, kernel_size=(1,1), bias=False, groups=32 ), 
@@ -160,10 +160,10 @@ class GCN(nn.Module):
         }
 
 class DASA(nn.Module):
-    def __init__(self):
+    def __init__(self, size):
         super().__init__()
-        self.LSDForIntersectionBranch = LocalShadowDetector()
-        self.LSDForDivergenceBranch = LocalShadowDetector()
+        self.LSDForIntersectionBranch = LocalShadowDetector(size=size)
+        self.LSDForDivergenceBranch = LocalShadowDetector(size=size)
         self.conv = nn.Conv2d(1, 1, 1)
 
     def forward(self, dark_region, shadow_scores, cue):
@@ -181,6 +181,7 @@ class DASA(nn.Module):
 class ShadowNet(nn.Module):
     def __init__(self):
         super(ShadowNet, self).__init__()
+        size = (320,320)
         mean = torch.tensor([0.485, 0.456, 0.406])
         std = torch.tensor([0.229, 0.224, 0.225])
         trans_img = torchvision.transforms.Normalize(mean, std)
@@ -195,10 +196,10 @@ class ShadowNet(nn.Module):
             nn.Conv2d( 64, 32, kernel_size=(3,3), padding=(1,1), bias=False ), nn.BatchNorm2d(32), nn.ReLU(),
             nn.Conv2d( 32, 1, 1, bias=False )
         )
-        self.dasa0 = DASA()
-        self.dasa1 = DASA()
-        self.dasa2 = DASA()
-        self.dasa3 = DASA()
+        self.dasa0 = DASA(size)
+        self.dasa1 = DASA(size)
+        self.dasa2 = DASA(size)
+        self.dasa3 = DASA(size)
         self.prediction = nn.Conv2d(4, 1, 1, bias=False)
 
     def forward(self, x):
