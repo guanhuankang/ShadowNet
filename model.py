@@ -72,7 +72,7 @@ class GCN(nn.Module):
         self.layer3 = backbone.features[4:6]
         self.layer4 = backbone.features[6:9]
 
-        ni, n0,n1,n2,n3,n4 = 3, 24, 48, 96, 136, 1536
+        ni, n0,n1,n2,n3,n4 = 3, 24, 32, 48, 136, 1536
 
         self.reduction4 = nn.Sequential(
             nn.Conv2d( n4, n3, 3, padding=1, bias=False ), nn.BatchNorm2d(n3), nn.ReLU(),
