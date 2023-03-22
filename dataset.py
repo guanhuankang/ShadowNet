@@ -1,5 +1,6 @@
 import os
 import PIL.Image as Image
+import torch
 import torch.utils.data as data
 from torch.utils.data import DataLoader
 import torchvision
@@ -58,10 +59,22 @@ class ImageFolder(data.Dataset):
         if random.random()<=0.5:
             for _ in range(len(ret)):
                 ret[_] = torchvision.transforms.functional.hflip(ret[_])
-        
+
+        ## randomly corrupt images
+        n = 16
+        h, w = 320//n, 320//n
+        corruption = torch.rand(1, 1, h, w).lt(0.15).float()
+        corruption_mask = torch.nn.functional.interpolate(corruption, size=(320, 320), mode="nearest")[0]
+        for i in range(len(ret)):
+            ret[i] = ret[i] * (1.0-corruption_mask)
+
         return ret
 
 def getDataLoader():
     bs = Config().data()["batch_size"]
     imageFolder = ImageFolder()
-    return DataLoader(imageFolder, batch_size=bs, num_workers=10, shuffle=True)
+    return DataLoader(imageFolder, batch_size=bs, num_workers=8, shuffle=True)
+
+if __name__=="__main__":
+    imageFolder = ImageFolder()
+    imageFolder[0]

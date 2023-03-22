@@ -29,6 +29,8 @@ class Loss(nn.Module):
 
     def forward(self, optimizer, net, data, index):
         img, gt = data[0].cuda(), data[1].cuda()
+        gt = gt.gt(0.5).float()
+
         bs = img.shape[0]
 
         trans_img = torch.stack( [self.trans_img(img[_]) for _ in range(bs) ], dim = 0 )
@@ -77,7 +79,7 @@ class Loss(nn.Module):
     
     def bceloss(self, m, gt, factor=1.0):
         gt = F.interpolate(gt.data, size=m.shape[-2::])
-        gt = (gt+0.5).int().float()
+        gt = gt.gt(0.5).float()
         
         neg_cnt = (1.0-gt).sum()*1.0
         pos_cnt = gt.sum()*1.0
@@ -95,7 +97,7 @@ class Loss(nn.Module):
         return loss_pos
     
     def single(self, m, gt, mask, factor=1.0):
-        gt = (gt+0.5).int().float()
+        gt = gt.gt(0.5).float()
         sbm = torch.sign(torch.relu(mask))
 
         neg_cnt = ((1.0-gt)*sbm.data).sum()*1.0
