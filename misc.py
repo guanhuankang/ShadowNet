@@ -16,8 +16,7 @@ def log(*args):
         f.write(str(msg)+"\n")
 
 def check_mkdir(path):
-    if not os.path.exists(path):
-        os.mkdir(path)
+    os.makedirs(path, exist_ok=True)
         
 def saveModel(model, aux=""):
     aux = str(aux)
