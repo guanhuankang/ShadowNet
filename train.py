@@ -10,7 +10,7 @@ from model import ShadowNet
 from dataset import getDataLoader
 from config import Config
 from misc import saveModel
-
+from demo import Demo
 # def setup_seed(seed):
 #      torch.manual_seed(seed)
 #      torch.cuda.manual_seed_all(seed)
@@ -61,7 +61,12 @@ def train():
             current_iter += 1
             bar.update(current_iter)
             if current_iter > 4500 and current_iter%100==0:
-                saveModel(net, aux=str(current_iter))
+                ckp = saveModel(net, aux=str(current_iter))
+                demo = Demo(modelPath=ckp)
+                demo.eval(imgPath="../dataset/SBU-shadow/SBU-Test/ShadowImages",
+                          outPath="temp/iter{}".format(current_iter),
+                          gtPath="../dataset/SBU-shadow/SBU-Test/ShadowMasks",
+                          name="iter{}".format(current_iter))
     saveModel(net, aux=str(conf["max_iter"]))
 
 if __name__ == '__main__':

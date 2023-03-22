@@ -26,6 +26,7 @@ def saveModel(model, aux=""):
     conf = config.Config()
     path = os.path.join(D, "%s_%s.pt"%(conf.dataset_name, aux))
     torch.save(model.state_dict(), path)
+    return path
 
 def metric(mask, gt):
     mask = (mask+0.5).int()
