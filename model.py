@@ -60,45 +60,39 @@ class LocalShadowDetector(nn.Module):
 class GCN(nn.Module):
     def __init__(self):
         super().__init__()
-        backbone = models.resnext101_32x8d(pretrained=True)
-        # backbone = models.resnet50(pretrained=True)
-        print("adopt pretrained R101 weights")
+        # backbone = models.resnext101_32x8d(pretrained=True)
+        backbone = models.efficientnet_b3(pretrained=True)
+        print("adopt pretrained efficientnet_b3 weights")
         # backbone = models.resnext101_32x8d(weights=torchvision.models.ResNeXt101_32X8D_Weights.IMAGENET1K_V2)
         # print("adopt ResNeXt101_32X8D_Weights.IMAGENET1K_V1")
 
+        self.layer0 = backbone.features[0:2]
+        self.layer1 = backbone.features[2:3]
+        self.layer2 = backbone.features[3:4]
+        self.layer3 = backbone.features[4:6]
+        self.layer4 = backbone.features[6:9]
 
-        self.layer0 = nn.Sequential(
-            backbone.conv1,
-            backbone.bn1,
-            backbone.relu
-        )
-        self.layer1 = nn.Sequential(
-            backbone.maxpool,
-            backbone.layer1
-        )
-        self.layer2 = backbone.layer2
-        self.layer3 = backbone.layer3
-        self.layer4 = backbone.layer4
+        ni, n0,n1,n2,n3,n4 = 3, 24, 48, 96, 136, 1536
 
         self.reduction4 = nn.Sequential(
-            nn.Conv2d( 2048, 512, 3, padding=1, bias=False ), nn.BatchNorm2d(512), nn.ReLU(),
-            nn.Conv2d( 512, 32, 1, bias = False), nn.BatchNorm2d(32), nn.ReLU()
+            nn.Conv2d( n4, n3, 3, padding=1, bias=False ), nn.BatchNorm2d(n3), nn.ReLU(),
+            nn.Conv2d( n3, 32, 1, bias = False), nn.BatchNorm2d(32), nn.ReLU()
         )
         self.reduction3 = nn.Sequential(
-            nn.Conv2d( 1024, 512, 3, padding=1, bias=False ), nn.BatchNorm2d(512), nn.ReLU(),
-            nn.Conv2d( 512, 32, 1, bias = False), nn.BatchNorm2d(32), nn.ReLU()
+            nn.Conv2d( n3, n2, 3, padding=1, bias=False ), nn.BatchNorm2d(n2), nn.ReLU(),
+            nn.Conv2d( n2, 32, 1, bias = False), nn.BatchNorm2d(32), nn.ReLU()
         )
         self.reduction2 = nn.Sequential(
-            nn.Conv2d( 512, 256, 3, padding=1, bias=False ), nn.BatchNorm2d(256), nn.ReLU(),
-            nn.Conv2d( 256, 32, 1, bias = False), nn.BatchNorm2d(32), nn.ReLU()
+            nn.Conv2d( n2, n1, 3, padding=1, bias=False ), nn.BatchNorm2d(n1), nn.ReLU(),
+            nn.Conv2d( n1, 32, 1, bias = False), nn.BatchNorm2d(32), nn.ReLU()
         )
         self.reduction1 = nn.Sequential(
-            nn.Conv2d( 256, 128, 3, padding=1, bias=False ), nn.BatchNorm2d(128), nn.ReLU(),
-            nn.Conv2d( 128, 32, 1, bias = False), nn.BatchNorm2d(32), nn.ReLU()
+            nn.Conv2d( n1, n0, 3, padding=1, bias=False ), nn.BatchNorm2d(n0), nn.ReLU(),
+            nn.Conv2d( n0, 32, 1, bias = False), nn.BatchNorm2d(32), nn.ReLU()
         )
         self.reduction0 = nn.Sequential(
-            nn.Conv2d( 64, 64, 3, padding=1, bias=False ), nn.BatchNorm2d(64), nn.ReLU(),
-            nn.Conv2d( 64, 32, 1, bias = False), nn.BatchNorm2d(32), nn.ReLU()
+            nn.Conv2d( n0, n0, 3, padding=1, bias=False ), nn.BatchNorm2d(n0), nn.ReLU(),
+            nn.Conv2d( n0, 32, 1, bias = False), nn.BatchNorm2d(32), nn.ReLU()
         )
 
         self.fusion3 = ConvBlock(64, 32)
