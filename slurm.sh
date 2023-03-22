@@ -12,3 +12,4 @@
 pwd
 nvidia-smi
 python train.py
+python infer.py

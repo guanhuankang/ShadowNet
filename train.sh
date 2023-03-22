@@ -1,0 +1,1 @@
+sbatch -A pa_cs_department slurm.sh
