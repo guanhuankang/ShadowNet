@@ -6,7 +6,7 @@ import numpy as np
 import random
 
 from loss import Loss
-from model import GCNet
+from model import ShadowNet
 from dataset import getDataLoader
 from config import Config
 from misc import saveModel
@@ -24,7 +24,7 @@ def train():
     conf = Config().data()
     
     dataLoader = getDataLoader()
-    net = GCNet().cuda()
+    net = ShadowNet().cuda()
     net.train()
     # optimizer = optim.SGD([
     #     {'params': [param for name, param in net.named_parameters() if name[-4:] == 'bias'],

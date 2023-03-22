@@ -5,13 +5,13 @@ import torch
 import torch.nn as nn
 import torchvision
 
-from model import GCNet
+from model import ShadowNet
 from misc import loadModel, crf_refine, check_mkdir
 import tqdm
 
 class Demo:
     def __init__(self, modelPath="./models/SBU_5000.pt"):
-        self.net = GCNet().cuda()
+        self.net = ShadowNet().cuda()
         loadModel(self.net, modelPath)
         self.net.eval()
 
@@ -28,7 +28,7 @@ class Demo:
 
     def postProcess(self, img, pred):
         size = tuple(reversed(img.size))
-        pred = torchvision.transforms.ToPILImage()(nn.Sigmoid()(pred["final"][0][0][0]).cpu())
+        pred = torchvision.transforms.ToPILImage()(nn.Sigmoid()(pred["pred"][0][0]).cpu())
         pred = torchvision.transforms.Resize(size)(pred)
         pred_crf = crf_refine(
             np.array(img),
