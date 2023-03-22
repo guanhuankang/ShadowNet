@@ -60,7 +60,13 @@ class LocalShadowDetector(nn.Module):
 class GCN(nn.Module):
     def __init__(self):
         super().__init__()
-        backbone = models.resnext101_32x8d(pretrained=True)
+        try:
+            backbone = models.resnext101_32x8d(weights=torchvision.models.ResNeXt101_32X8D_Weights.IMAGENET1K_V2)
+            print("adopt ResNeXt101_32X8D_Weights.IMAGENET1K_V2")
+        except:
+            backbone = models.resnext101_32x8d(pretrained=True)
+            print("adopt pretrained R101 weights")
+
 
         self.layer0 = nn.Sequential(
             backbone.conv1,
