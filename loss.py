@@ -57,13 +57,15 @@ class Loss(nn.Module):
         self.sm.update(dasa_d_loss.item())
 
         ret = loss.item()
-        log( "#%4d="%index, ret,
+        log( "iter:{:04d}, lr:{}, loss:{},{},{},{},{}".format(
+            index,
+            optimizer.param_groups[0]["lr"],
             self.fl.avg,
             self.pl.avg,
             self.bl.avg,
             self.ml.avg,
-            self.sm.avg,
-        )
+            self.sm.avg
+        ))
 
         optimizer.zero_grad()
         loss.backward()
