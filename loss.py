@@ -57,7 +57,7 @@ class Loss(nn.Module):
         self.sm.update(dasa_d_loss.item())
 
         ret = loss.item()
-        log( "iter:{:04d}, lr:{}, loss:{},{},{},{},{}".format(
+        log( "iter:{:4d}, lr:{:.5f}, loss:{:.3f},{:.3f},{:.3f},{:.3f},{:.3f}".format(
             index,
             optimizer.param_groups[0]["lr"],
             self.fl.avg,
