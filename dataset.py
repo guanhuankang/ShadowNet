@@ -63,7 +63,7 @@ class ImageFolder(data.Dataset):
         ## randomly corrupt images
         n = 16
         h, w = 320//n, 320//n
-        corruption = torch.rand(1, 1, h, w).lt(0.15).float()
+        corruption = torch.rand(1, 1, h, w).lt(0.30).float()
         corruption_mask = torch.nn.functional.interpolate(corruption, size=(320, 320), mode="nearest")[0]
         for i in range(len(ret)):
             ret[i] = ret[i] * (1.0-corruption_mask)
