@@ -20,7 +20,7 @@ class ImageFolder(data.Dataset):
             with open("scores.txt", "r") as f:
                 for line in f.readlines():
                     name_list.append(line.split()[0])
-            self.name_list = name_list[0:2500]
+            self.name_list = name_list[0:3500]
         else:
             self.name_list = [x for x in os.listdir(self.img_path) if x.endswith(".jpg") or x.endswith(".png")]
         self.scale = conf["scale"]
@@ -44,7 +44,7 @@ class ImageFolder(data.Dataset):
         ## randomly corrupt images
         n = 16
         h, w = self.scale[0]//n, self.scale[1]//n
-        corruption = torch.rand(1, 1, h, w).lt(1.0).float()
+        corruption = torch.rand(1, 1, h, w).lt(0.85).float()
         corruption_mask = torch.nn.functional.interpolate(corruption, size=self.scale, mode="nearest")[0]
         img = img * corruption_mask
 
