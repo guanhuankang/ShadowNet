@@ -60,7 +60,7 @@ def train():
             
             current_iter += 1
             bar.update(current_iter)
-            if current_iter > 4500 and current_iter%100==0:
+            if False and current_iter > 4500 and current_iter%100==0:
                 ckp = saveModel(net, aux=str(current_iter))
                 demo = Demo(modelPath=ckp)
                 demo.eval(imgPath="../dataset/SBU-shadow/SBU-Test/ShadowImages",
