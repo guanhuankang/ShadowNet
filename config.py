@@ -18,11 +18,11 @@ class Config:
     def data(self):
         return {
             "data_paths":[ self.train_img_path, self.train_gt_path],##[img, gt]
-            "batch_size":6,
+            "batch_size": 16,
             "lr": 5e-3,
             "momentum":0.9,
             "weight_decay":5e-4,
-            "max_iter":5000,
+            "max_iter": 2000,
             "lr_decay":0.9,
             "scale":(416,416)
         }
