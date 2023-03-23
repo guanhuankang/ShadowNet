@@ -24,7 +24,7 @@ class Config:
             "weight_decay":5e-4,
             "max_iter": 5000,
             "lr_decay":0.9,
-            "scale":(320,320)
+            "scale":(400,400)
         }
     
     def err(self, index, aux=None):
