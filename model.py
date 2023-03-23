@@ -61,8 +61,9 @@ class GCN(nn.Module):
     def __init__(self):
         super().__init__()
         # backbone = models.resnext101_32x8d(pretrained=True)
-        backbone = models.efficientnet_b3(pretrained=True)
-        print("adopt pretrained efficientnet_b3 weights")
+        # backbone = models.efficientnet_b3(pretrained=True)
+        backbone = models.efficientnet_b5(pretrained=True)
+        print("adopt pretrained efficientnet_b5 weights")
         # backbone = models.resnext101_32x8d(weights=torchvision.models.ResNeXt101_32X8D_Weights.IMAGENET1K_V2)
         # print("adopt ResNeXt101_32X8D_Weights.IMAGENET1K_V1")
 
@@ -72,7 +73,7 @@ class GCN(nn.Module):
         self.layer3 = backbone.features[4:6]
         self.layer4 = backbone.features[6:9]
 
-        ni, n0,n1,n2,n3,n4 = 3, 24, 32, 48, 136, 1536
+        ni, n0,n1,n2,n3,n4 = 3, 24, 40, 64, 176, 2048
 
         self.reduction4 = nn.Sequential(
             nn.Conv2d( n4, n3, 3, padding=1, bias=False ), nn.BatchNorm2d(n3), nn.ReLU(),
