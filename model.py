@@ -36,7 +36,7 @@ class head(nn.Module):
         return self.conv_1x1(x)
 
 class LocalShadowDetector(nn.Module):
-    def __init__(self, size=(320,320)):
+    def __init__(self, size=(416,416)):
         super(LocalShadowDetector, self).__init__()
         self.block = nn.Sequential(
             nn.Conv2d( 64, 32, kernel_size=(1,1), bias=False, groups=32 ), 
