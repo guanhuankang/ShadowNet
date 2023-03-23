@@ -4,6 +4,7 @@ import progressbar
 from torch import optim
 import numpy as np
 import random
+from torch.optim.lr_scheduler import StepLR
 
 from loss import Loss
 from model import ShadowNet
@@ -39,6 +40,7 @@ def train():
         momentum=conf["momentum"],
         weight_decay=conf["weight_decay"]
     )
+    scheduler = StepLR(optimizer, 1000, 0.1)
     loss = Loss().cuda()
 
     current_iter = 0
@@ -54,18 +56,11 @@ def train():
             #                                                     ) ** conf['lr_decay']
             # optimizer.param_groups[1]['lr'] = conf['lr'] * (1 - float(current_iter) / conf['max_iter']
             #                                                 ) ** conf['lr_decay']
-            warmup = 100
-            if current_iter<=warmup:
-                lr = conf["lr"] * float(current_iter) / warmup
-            else:
-                c = current_iter - warmup
-                t = conf["max_iter"] - warmup
-                lr = conf["lr"] * (1 - c/t)**conf["lr_decay"]
-            optimizer.param_groups[0]["lr"] = lr
-
+            # optimizer.param_groups[0]["lr"] = lr
             loss(optimizer, net, data, current_iter)
             
             current_iter += 1
+            scheduler.step()
             bar.update(current_iter)
             if False and current_iter > 4500 and current_iter%100==0:
                 ckp = saveModel(net, aux=str(current_iter))
