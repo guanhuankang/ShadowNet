@@ -11,64 +11,44 @@ from config import Config
 
 class ImageFolder(data.Dataset):
     def __init__(self):
-        conf = Config().data()
-
-        self.data_list = []
-        data_exts = [".jpg", ".png", ".JPG", ".PNG"]
-        for p in conf["data_paths"]:
-            LL = os.listdir(p)
-            L = []
-            for _ in LL:
-                if _[-4::] in data_exts:L.append(_)
-            L.sort()
-            self.data_list.append(L)
-
-        ## check
-        cnt = len(self.data_list)
-        if cnt<=0:
-            print(conf.err(1));exit(0)
-        tot = len(self.data_list[0])
-        for l in range(1,cnt):
-            if len(self.data_list[l])!=tot: print(conf.err(0));exit(0)
-            for _ in range(tot):
-                if self.data_list[0][_][:-4]!=self.data_list[l][_][:-4]:print(conf.err(1));exit(0)
-        
-        self.data_paths = conf["data_paths"]
+        c = Config()
+        conf = c.data()
+        self.img_path = conf["data_paths"][0]
+        self.gt_path = conf["data_paths"][1]
+        if c.dataset_name=="SBU":
+            name_list = []
+            with open("scores.txt", "r") as f:
+                for line in f.readlines():
+                    name_list.append(line.split()[0])
+            self.name_list = name_list[0:3000]
+        else:
+            self.name_list = [x for x in os.listdir(self.img_path) if x.endswith(".jpg") or x.endswith(".png")]
         self.scale = conf["scale"]
     
     def __len__(self):
-        return len(self.data_list[0])
+        return len(self.name_list)
     
     def __getitem__(self, index):
-        cnt = len(self.data_list)
-        tot = len(self.data_list[0])
+        name = self.name_list[index]
+        cvt = lambda x: torchvision.transforms.ToTensor()(
+            torchvision.transforms.Resize(self.scale)(x)
+        )
+        img = cvt(Image.open(os.path.join(self.img_path, name)))
+        gt = cvt( Image.open(os.path.join(self.gt_path, name.replace(".jpg", ".png"))) )
 
-        ret = []
-        for i in range(cnt):
-            p = os.path.join( self.data_paths[i], self.data_list[i][index] )
-            img = Image.open(p)
-            ret.append(
-                torchvision.transforms.ToTensor()(
-                    torchvision.transforms.Resize(self.scale)(
-                        img
-                    )
-                )
-            ) ## 0-1
-        
         ## Random Flip
         if random.random()<=0.5:
-            for _ in range(len(ret)):
-                ret[_] = torchvision.transforms.functional.hflip(ret[_])
+            img = torchvision.transforms.functional.hflip(img)
+            gt = torchvision.transforms.functional.hflip(gt)
 
         ## randomly corrupt images
         n = 16
         h, w = self.scale[0]//n, self.scale[1]//n
         corruption = torch.rand(1, 1, h, w).lt(0.85).float()
         corruption_mask = torch.nn.functional.interpolate(corruption, size=self.scale, mode="nearest")[0]
-        # corruption_mask = (corruption_mask + ret[1]).gt(0.5).float() ## filter shadow area
-        ret[0] = ret[0] * corruption_mask
+        img = img * corruption_mask
 
-        return ret
+        return img, gt
 
 def getDataLoader():
     bs = Config().data()["batch_size"]
