@@ -54,13 +54,7 @@ def train():
             #                                                     ) ** conf['lr_decay']
             # optimizer.param_groups[1]['lr'] = conf['lr'] * (1 - float(current_iter) / conf['max_iter']
             #                                                 ) ** conf['lr_decay']
-            warmup = 100
-            if current_iter<=warmup:
-                lr = conf["lr"] * float(current_iter) / warmup
-            else:
-                c = current_iter - warmup
-                t = conf["max_iter"] - warmup
-                lr = conf["lr"] * (1 - c/t)**conf["lr_decay"]
+            lr = conf["lr"] * (1 - current_iter/conf["max_iter"])**conf["lr_decay"]
             optimizer.param_groups[0]["lr"] = lr
 
             loss(optimizer, net, data, current_iter)

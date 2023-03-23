@@ -19,7 +19,7 @@ class Demo:
 
     def prepare(self, img):
         img = torchvision.transforms.ToTensor()(
-            torchvision.transforms.Resize((416, 416))(
+            torchvision.transforms.Resize((320, 320))(
                 img
             )
         )
