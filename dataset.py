@@ -20,7 +20,7 @@ class ImageFolder(data.Dataset):
             with open("scores.txt", "r") as f:
                 for line in f.readlines():
                     name_list.append(line.split()[0])
-            self.name_list = name_list[0:3000]
+            self.name_list = name_list[0:3500]
         else:
             self.name_list = [x for x in os.listdir(self.img_path) if x.endswith(".jpg") or x.endswith(".png")]
         self.scale = conf["scale"]
