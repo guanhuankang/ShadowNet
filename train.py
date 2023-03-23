@@ -22,6 +22,7 @@ from demo import Demo
 
 def train():
     conf = Config().data()
+    print(conf)
     
     dataLoader = getDataLoader()
     net = ShadowNet().cuda()
