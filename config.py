@@ -3,8 +3,8 @@ import sys, os
 class Config:
     def __init__(self):
         ## Configure the following three variables manually ##
-        self.train_img_path = "../dataset/SBU-shadow/SBUTrain4KRecoveredSmall/ShadowImages"
-        self.train_gt_path = "../dataset/SBU-shadow/SBUTrain4KRecoveredSmall/ShadowMasks"
+        self.train_img_path = "../dataset/SBU-shadow/SBU-Test/ShadowImages"
+        self.train_gt_path = "../dataset/SBU-shadow/SBU-Test/ShadowMasks"
         self.dataset_name = "SBU" ## OR ISTD
         ####################################################
         self.init()
