@@ -228,7 +228,7 @@ class ShadowNet(nn.Module):
             "dark_region": dark_region,
             "Oi": [Oi_0, Oi_1, Oi_2, Oi_3],
             "Od": [Od_0, Od_1, Od_2, Od_3],
-            "aux_masks": [Oi, Od, Oc]
+            "aux_masks": [Oi.detach(), Od.detach(), Oc.detach()]
         }
 
 

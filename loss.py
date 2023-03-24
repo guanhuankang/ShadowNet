@@ -44,11 +44,19 @@ class Loss(nn.Module):
         #     "Od": [Od_0, Od_1, Od_2, Od_3],
         #     "aux_masks": [Oi, Od, Oc]
         # }
-        final_loss = self.bceloss(out["pred"], gt, self.shadow_recall_factor) ## 1.10 for SBU & 1.00 for ISTD
-        gcn_loss = self.predict_loss(out["shadow_scores"], gt)
-        ddr_loss = self.bceloss(out["dark_region"], gt)
-        dasa_i_loss = self.mask_loss(out["Oi"], gt, out['aux_masks'][0])
-        dasa_d_loss = self.mask_loss(out["Od"], gt, out['aux_masks'][1])
+        # final_loss = self.bceloss(out["pred"], gt, self.shadow_recall_factor) ## 1.10 for SBU & 1.00 for ISTD
+        # gcn_loss = self.predict_loss(out["shadow_scores"], gt)
+        # ddr_loss = self.bceloss(out["dark_region"], gt)
+        # dasa_i_loss = self.mask_loss(out["Oi"], gt, out['aux_masks'][0])
+        # dasa_d_loss = self.mask_loss(out["Od"], gt, out['aux_masks'][1])
+
+        final_loss = F.binary_cross_entropy_with_logits(out["pred"], gt)
+        gcn_loss = sum([F.binary_cross_entropy_with_logits(x, gt) for x in out["shadow_scores"]])
+        ddr_loss = F.binary_cross_entropy_with_logits(out["dark_region"], gt)
+
+        Oi, Od = out['aux_masks'][0], out['aux_masks'][1]
+        dasa_i_loss = sum(F.binary_cross_entropy_with_logits(out["Oi"], gt, reduction="none") * Oi) / (Oi.sum() + 1e-6)
+        dasa_d_loss = sum(F.binary_cross_entropy_with_logits(out["Od"], gt, reduction="none") * Od) / (Od.sum() + 1e-6)
 
         loss = final_loss + gcn_loss + ddr_loss + dasa_i_loss +dasa_d_loss
 
