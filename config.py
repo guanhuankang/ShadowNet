@@ -11,7 +11,7 @@ class Config:
 
     def init(self):
         if self.dataset_name=="SBU":
-            self.shadow_recall_factor = 1.10
+            self.shadow_recall_factor = 1.00
         else:
             self.shadow_recall_factor = 1.00
 
