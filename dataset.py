@@ -44,11 +44,15 @@ class ImageFolder(data.Dataset):
             gt = torchvision.transforms.functional.hflip(gt)
 
         ## RandomCrop
-        a = np.random.rand() * 0.5 + 1.0
-        img = F.interpolate(img.unsqueeze(0), scale_factor=a, mode="bilinear")
-        gt = F.interpolate(gt.unsqueeze(0), scale_factor=a, mode="nearest")
-        catcon = torchvision.transforms.RandomCrop(self.scale)(torch.cat([img, gt], dim=1))[0]
-        img, gt = catcon[0:3], catcon[3::]
+        # a = np.random.rand() * 0.5 + 1.0
+        # img = F.interpolate(img.unsqueeze(0), scale_factor=a, mode="bilinear")
+        # gt = F.interpolate(gt.unsqueeze(0), scale_factor=a, mode="nearest")
+        # catcon = torchvision.transforms.RandomCrop(self.scale)(torch.cat([img, gt], dim=1))[0]
+        # img, gt = catcon[0:3], catcon[3::]
+
+        ## Random Brightness
+        if random.random()<=0.5:
+            img = torchvision.transforms.ColorJitter(brightness=0.5)(img)
 
         ## randomly corrupt images
         n = 16
