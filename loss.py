@@ -59,7 +59,6 @@ class Loss(nn.Module):
         dasa_d_loss = sum([torch.sum(F.binary_cross_entropy_with_logits(x, gt, reduction="none") * Od) / (Od.sum() + 1e-6) for x in out["Od"]])
 
         loss = final_loss + gcn_loss + ddr_loss + dasa_i_loss +dasa_d_loss
-        print(dasa_i_loss, flush=True)
 
         self.fl.update(final_loss.item())
         self.pl.update(gcn_loss.item())
