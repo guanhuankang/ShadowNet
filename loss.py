@@ -55,8 +55,8 @@ class Loss(nn.Module):
         ddr_loss = F.binary_cross_entropy_with_logits(out["dark_region"], gt)
 
         Oi, Od = out['aux_masks'][0], out['aux_masks'][1]
-        dasa_i_loss = sum(F.binary_cross_entropy_with_logits(out["Oi"], gt, reduction="none") * Oi) / (Oi.sum() + 1e-6)
-        dasa_d_loss = sum(F.binary_cross_entropy_with_logits(out["Od"], gt, reduction="none") * Od) / (Od.sum() + 1e-6)
+        dasa_i_loss = sum([sum(F.binary_cross_entropy_with_logits(x, gt, reduction="none") * Oi) / (Oi.sum() + 1e-6) for x in out["Oi"]])
+        dasa_d_loss = sum([sum(F.binary_cross_entropy_with_logits(x, gt, reduction="none") * Od) / (Od.sum() + 1e-6) for x in out["Od"]])
 
         loss = final_loss + gcn_loss + ddr_loss + dasa_i_loss +dasa_d_loss
 
