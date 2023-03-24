@@ -23,6 +23,7 @@ class ImageFolder(data.Dataset):
             self.name_list = name_list + name_list[0:3200]
         else:
             self.name_list = [x for x in os.listdir(self.img_path) if x.endswith(".jpg") or x.endswith(".png")]
+        print("dataset len", len(self.name_list))
         self.scale = conf["scale"]
     
     def __len__(self):
@@ -33,8 +34,8 @@ class ImageFolder(data.Dataset):
         cvt = lambda x: torchvision.transforms.ToTensor()(
             torchvision.transforms.Resize(self.scale)(x)
         )
-        img = cvt(Image.open(os.path.join(self.img_path, name)))
-        gt = cvt( Image.open(os.path.join(self.gt_path, name.replace(".jpg", ".png"))) )
+        img = cvt(Image.open(os.path.join(self.img_path, name)).convert("RGB"))
+        gt = cvt( Image.open(os.path.join(self.gt_path, name.replace(".jpg", ".png"))).convert("L") )
 
         ## Random Flip
         if random.random()<=0.5:

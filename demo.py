@@ -39,7 +39,7 @@ class Demo:
         return pred_crf
 
     def detect(self, img_path):
-        img = Image.open(img_path)
+        img = Image.open(img_path).convert("RGB")
         pred = self.net(self.prepare(img))
         pred_crf = self.postProcess(img, pred)
         return img, Image.fromarray(pred_crf)
