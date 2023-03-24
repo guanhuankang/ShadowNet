@@ -43,9 +43,9 @@ class ImageFolder(data.Dataset):
             gt = torchvision.transforms.functional.hflip(gt)
 
         ## randomly corrupt images
-        n = 8
+        n = 16
         h, w = self.scale[0]//n, self.scale[1]//n
-        corruption = torch.rand(1, 1, h, w).lt(0.70).float()
+        corruption = torch.rand(1, 1, h, w).lt(0.85).float()
         corruption_mask = torch.nn.functional.interpolate(corruption, size=self.scale, mode="nearest")[0]
         img = img * corruption_mask
 
