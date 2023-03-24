@@ -21,7 +21,7 @@ class ImageFolder(data.Dataset):
             with open("sbu_config/scores.txt", "r") as f:
                 for line in f.readlines():
                     name_list.append(line.split()[0])
-            self.name_list = name_list[0:3200] + name_list[0:2500] + name_list[0:1500] + name_list[0:1000]
+            self.name_list = name_list[0:3200] + name_list[0:2500] + name_list[0:1000]
         else:
             self.name_list = [x for x in os.listdir(self.img_path) if x.endswith(".jpg") or x.endswith(".png")]
         print("dataset len", len(self.name_list))
@@ -44,11 +44,11 @@ class ImageFolder(data.Dataset):
             gt = torchvision.transforms.functional.hflip(gt)
 
         ## RandomCrop
-        # a = np.random.rand() * 0.5 + 1.0
-        # img = F.interpolate(img.unsqueeze(0), scale_factor=a, mode="bilinear")
-        # gt = F.interpolate(gt.unsqueeze(0), scale_factor=a, mode="nearest")
-        # catcon = torchvision.transforms.RandomCrop(self.scale)(torch.cat([img, gt], dim=1))[0]
-        # img, gt = catcon[0:3], catcon[3::]
+        a = np.random.rand() * 0.5 + 1.0
+        img = F.interpolate(img.unsqueeze(0), scale_factor=a, mode="bilinear")
+        gt = F.interpolate(gt.unsqueeze(0), scale_factor=a, mode="nearest")
+        catcon = torchvision.transforms.RandomCrop(self.scale)(torch.cat([img, gt], dim=1))[0]
+        img, gt = catcon[0:3], catcon[3::]
 
         ## randomly corrupt images
         n = 16
