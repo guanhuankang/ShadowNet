@@ -3,9 +3,10 @@ import PIL.Image as Image
 import torch
 import torch.utils.data as data
 from torch.utils.data import DataLoader
+import torch.nn.functional as F
 import torchvision
 import random
-
+import numpy as np
 from config import Config
 
 
@@ -42,6 +43,13 @@ class ImageFolder(data.Dataset):
             img = torchvision.transforms.functional.hflip(img)
             gt = torchvision.transforms.functional.hflip(gt)
 
+        ## RandomCrop
+        a = np.random.rand() * 0.5 + 1.0
+        img = F.interpolate(img.unsqueeze(0), scale_factor=a, mode="bilinear")
+        gt = F.interpolate(gt.unsqueeze(0), scale_factor=a, mode="nearest")
+        catcon = torchvision.transforms.RandomCrop(self.scale)(torch.cat([img, gt], dim=1))[0]
+        img, gt = catcon[0:3], catcon[3::]
+
         ## randomly corrupt images
         n = 8
         h, w = self.scale[0]//n, self.scale[1]//n
@@ -58,5 +66,5 @@ def getDataLoader():
 
 if __name__=="__main__":
     imageFolder = ImageFolder()
-    for i in range(10):
+    for i in range(2000, 2010):
         imageFolder[i]
