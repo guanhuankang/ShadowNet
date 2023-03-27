@@ -51,7 +51,7 @@ class ImageFolder(data.Dataset):
         # img, gt = catcon[0:3], catcon[3::]
 
         ## Random Brightness
-        if random.random()<=0.5
+        if random.random()<=0.5:
             img = torchvision.transforms.ColorJitter(brightness=0.5)(img)
 
         ## randomly corrupt images
