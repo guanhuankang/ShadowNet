@@ -181,7 +181,7 @@ class DASA(nn.Module):
 class ShadowNet(nn.Module):
     def __init__(self):
         super(ShadowNet, self).__init__()
-        size = (320,320)
+        size = (384,384)
         mean = torch.tensor([0.485, 0.456, 0.406])
         std = torch.tensor([0.229, 0.224, 0.225])
         trans_img = torchvision.transforms.Normalize(mean, std)
