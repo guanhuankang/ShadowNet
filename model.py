@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import torchvision.models as models
 import torchvision
 
+from cbam import CBAM
 from config import Config
 
 class ConvBlock(nn.Module):
@@ -24,6 +25,15 @@ class ConvBlock(nn.Module):
         block1 = F.relu(self.block1(x) + x, True)
         block2 = self.block2(block1)
         return block2
+
+class CBAMConv(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.cbam = CBAM(in_channels)
+        self.conv = nn.Conv2d(in_channels, out_channels, 1)
+
+    def forward(self, x):
+        return self.conv(self.cbam(x) + x)
 
 class head(nn.Module):
     def __init__(self, in_channels):
@@ -101,10 +111,15 @@ class GCN(nn.Module):
             nn.Conv2d( 64, 32, 1, bias = False), nn.BatchNorm2d(32), nn.ReLU()
         )
 
-        self.fusion3 = ConvBlock(64, 32)
-        self.fusion2 = ConvBlock(64, 32)
-        self.fusion1 = ConvBlock(96, 32)
-        self.fusion0 = ConvBlock(128, 32)
+        # self.fusion3 = ConvBlock(64, 32)
+        # self.fusion2 = ConvBlock(64, 32)
+        # self.fusion1 = ConvBlock(96, 32)
+        # self.fusion0 = ConvBlock(128, 32)
+
+        self.fusion3 = CBAMConv(64, 32)
+        self.fusion2 = CBAMConv(64, 32)
+        self.fusion1 = CBAMConv(96, 32)
+        self.fusion0 = CBAMConv(128, 32)
 
         self.pred3 = head(32)
         self.pred2 = head(32)
